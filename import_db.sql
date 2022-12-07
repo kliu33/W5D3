@@ -65,3 +65,10 @@ INSERT INTO
 VALUES
     ('NOT NULL?', 'Why do we need NOT NULL in sql?', (SELECT id FROM users WHERE (fname = 'Brandon' AND lname = 'Choi'))),
     ('Caps?', 'All sql in caps?', (SELECT id FROM users WHERE (fname = 'Kevin' AND lname = 'Liu')));
+
+INSERT INTO
+    replies (user_id, question_id, parent_reply_id, body)
+VALUES  
+    (1, 2, NULL,'can you clarify your question, Kevin?'), 
+    (2, 2, 1, 'NO'),
+    (1, 2, 2, 'I''m just trying to help..');
