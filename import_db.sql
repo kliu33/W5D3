@@ -52,7 +52,7 @@ CREATE TABLE question_likes (
 
     FOREIGN KEY (user_id) REFERENCES users(id)
     FOREIGN KEY (question_id) REFERENCES questions(question_id)
-)       
+);   
 
 INSERT INTO
     users (fname, lname)
@@ -63,5 +63,5 @@ VALUES
 INSERT INTO
     questions (title, body, author_id)
 VALUES
-    ('NOT NULL?', 'Why do we need NOT NULL in sql?', (SELECT id FROM users WHERE fname = 'Brandon' AND lname = 'Choi')),
-    ('Caps?', 'All sql in caps?', (SELECT id FROM users WHERE fname = 'Kevin' AND lname = 'Liu'));
+    ('NOT NULL?', 'Why do we need NOT NULL in sql?', (SELECT id FROM users WHERE (fname = 'Brandon' AND lname = 'Choi'))),
+    ('Caps?', 'All sql in caps?', (SELECT id FROM users WHERE (fname = 'Kevin' AND lname = 'Liu')));
