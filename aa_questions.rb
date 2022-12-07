@@ -61,27 +61,27 @@ end
 
 class Question
 
-    attr_accessor :question_id, :title, :body, :author_id
+    attr_accessor :id, :title, :body, :author_id
 
     def initialize(options)
-        @question_id = options['question_id']
+        @id = options['id']
         @title = options['title']
         @body = options['body']
         @author_id = options['author_id']
     end
 
-    def self.find_by_id(question_id)
-        question_id = QuestionsDatabase.instance.execute(<<-SQL, question_id)
+    def self.find_by_id(id)
+        id = QuestionsDatabase.instance.execute(<<-SQL, id)
             SELECT
                 *
             FROM
                 questions
             WHERE
-                question_id = ?
+                id = ?
         SQL
 
-        return nil if question_id.length == 0
-        Question.new(question_id.first)
+        return nil if id.length == 0
+        Question.new(id.first)
     end
 
     def self.find_by_author_id(author_id)
@@ -91,23 +91,55 @@ class Question
             FROM
                 questions
             WHERE
-                question_id = ?
+                id = ?
         SQL
 
         return nil if author_id.length == 0
         author_id.map {|author|Question.new(author)}
     end
 
+    def author
+        author = QuestionsDatabase.instance.execute(<<-SQL, author_id)
+            SELECT
+                *
+            FROM
+                users
+            WHERE
+                id = ?
+        SQL
+        u = User.new(author.first)
+        "#{u.fname} #{u.lname}"
+    end
+
+    def replies
+        Reply.find_by_question_id(@id)
+    end
 end
 
 class Reply
 
+    attr_accessor :id, :user_id, :question_id, :parent_reply_id, :body
+
     def initialize(options)
-        @replies_id = options['replies_id']
+        @id = options['id']
         @user_id = options['user_id']
         @question_id = options['question_id']
         @parent_reply_id = options['parent_reply_id']
         @body = options['body']
+    end
+
+    def self.find_by_reply_id(id)
+        id = QuestionsDatabase.instance.execute(<<-SQL, id)
+            SELECT
+                *
+            FROM
+                replies
+            WHERE
+                id = ?
+        SQL
+
+        return nil if id.length == 0
+        Reply.new(id.first)
     end
 
     def self.find_by_user_id(user_id)
@@ -137,5 +169,19 @@ class Reply
         return nil if question_id.length == 0
         question_id.map {|question|Reply.new(question)}
     end
+
+    def author
+        author = QuestionsDatabase.instance.execute(<<-SQL, user_id)
+            SELECT
+                *
+            FROM
+                users
+            WHERE
+                id = ?
+        SQL
+        u = User.new(author.first)
+        "#{u.fname} #{u.lname}"
+    end
+
 
 end
